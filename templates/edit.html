@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form>
+{% for (name, label), field in fields %}
+    <label>
+        {{ label }}
+        <input type="{{ field.type }}" name="{{ name }}" value="{{ field.value }}" />
+    </label>
+    <br />
+{% end %}
+</form>
+{% end %}
