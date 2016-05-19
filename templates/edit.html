@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% from windmill.forms import InputField, ChoiceField %}
 <form>
-{% for (name, label), field in fields %}
-    <label>
-        {{ label }}
-        <input type="{{ field.type }}" name="{{ name }}" value="{{ field.value }}" />
-    </label>
+{% for field in fields %}
+    {% if isinstance(field, InputField) %}
+        {% include 'fields/input.html' %}
+    {% elif isinstance(field, ChoiceField) %}
+        {% include 'fields/choice.html' %}
+    {% end %}
     <br />
 {% end %}
 </form>

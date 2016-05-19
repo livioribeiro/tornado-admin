@@ -1,0 +1,21 @@
+{% from windmill.forms import SingleChoiceType, MultiChoiceType %}
+
+<label>{{ field.label }}</label>
+
+{% if field.is_input %}
+    {% for i, (choice, label) in enumerate(field.choices) %}
+    <input type="{{ field.type.name }}"
+           id="id_{{ field.name }}_{{ i }}"
+           name="{{ field.name }}"
+           {% if field.has_value(choice) %}checked{% end %}/>
+    <label for="id_{{ field.name }}_{{ i }}">{{ label }}</label>
+    {% end %}
+{% else %}
+    <select id="id_{{ field.name }}"
+            name="{{ field.name }}"
+            {% if field.is_multiple %}multiple{% end %}>
+        {% for choice, label in field.choices %}
+        <option value="{{ choice }}">{{ label }}</option>
+        {% end %}
+    </select>
+{% end %}

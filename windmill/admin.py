@@ -3,33 +3,33 @@ from copy import deepcopy
 import os
 
 import tornado.web
-from tornado import template
 
 
 class RequestHandler(tornado.web.RequestHandler):
     def initialize(self, manager):
         self.manager = manager
+
+    def get_template_path(self):
         base_dir = os.path.dirname(os.path.dirname(__file__))
-        self.loader = template.Loader(os.path.join(base_dir, 'templates'))
+        return os.path.join(base_dir, 'templates')
 
     def get(self, obj_id=None):
         if obj_id is not None:
             obj = self.manager.get_obj(obj_id)
 
             fields = deepcopy(self.manager.fields)
-            for ((name, _), field) in fields:
+            for field in fields:
                 if isinstance(obj, dict):
-                    field.value = obj.get(name, '')
+                    field.value = obj.get(field.name, '')
                 else:
-                    field.value = obj.__getattribute__(name, '')
+                    field.value = obj.__getattribute__(field.name, '')
 
-            self.write(self.loader.load('edit.html').generate(fields=fields))
+            self.render('edit.html', fields=fields)
         else:
             obj_list = self.manager.get_list(0, 10)
-            self.write(self.loader.load('list.html').generate(
-                fields=self.manager.list_display,
-                obj_list=obj_list
-            ))
+            self.render('list.html',
+                        fields=self.manager.list_display,
+                        obj_list=obj_list)
 
 
 class Manager(metaclass=ABCMeta):
